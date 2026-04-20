@@ -1,0 +1,7 @@
+package com.vserve.project.dto.user;
+
+public record LoginRequest(
+        String username,
+        String password
+) {
+}
