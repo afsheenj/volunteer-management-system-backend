@@ -57,8 +57,12 @@ public class PublicProfileServiceImpl implements PublicProfileService {
         Optional<User> userOpt = Optional.ofNullable(userRepository.findByUsername(name));
 
         if(userOpt.isPresent()){
-
             User user = userOpt.get();
+
+            if("ADMIN".equalsIgnoreCase(user.getRole().name())) {
+                throw new RuntimeException("Profile not found");
+            }
+
             UserAddress userAddress = userAddressRepository.findByUserId(user.getId());
             String city = (userAddress == null)? "-" : userAddress.getCity();
             String state = (userAddress == null)? "-" : userAddress.getState();

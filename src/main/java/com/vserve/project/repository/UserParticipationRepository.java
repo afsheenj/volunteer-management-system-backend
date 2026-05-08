@@ -67,4 +67,23 @@ public interface UserParticipationRepository extends JpaRepository<UserParticipa
         WHERE u.user.id = :userId
 """)
     Double findScore(Long userId);
+
+    @Modifying
+    @Transactional
+    @Query("""
+    UPDATE UserParticipation u
+    SET u.status = 'CANCELLED'
+    WHERE u.serviceRequest.id = :serviceId
+""")
+    void cancelByServiceId(@Param("serviceId") Long serviceId);
+
+    @Modifying
+    @Transactional
+    @Query("""
+    UPDATE UserParticipation u 
+    SET u.status = 'REJECTED' 
+    WHERE u.serviceRequest.id = :id
+    AND u.status = 'REQUESTED'
+""")
+    void RejectRequestedParticipants(@Param("id") Long id);
 }

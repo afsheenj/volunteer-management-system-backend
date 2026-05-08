@@ -50,17 +50,17 @@ public interface ServiceRequestRepository
             @Param("today") LocalDate today,
             @Param("time") LocalTime time);
 
-    @Modifying
-    @Transactional
-    @Query("""
-        UPDATE ServiceRequest s
-        SET s.status = 'COMPLETED'
-        WHERE s.serviceDate = :today
-        AND s.serviceEndTime <= :time
-    """)
-    void updateCompleteServices(
-            @Param("today") LocalDate today,
-            @Param("time") LocalTime time);
+//    @Modifying
+//    @Transactional
+//    @Query("""
+//        UPDATE ServiceRequest s
+//        SET s.status = 'COMPLETED'
+//        WHERE s.serviceDate = :today
+//        AND s.serviceEndTime <= :time
+//    """)
+//    void updateCompleteServices(
+//            @Param("today") LocalDate today,
+//            @Param("time") LocalTime time);
 
     @Modifying
     @Transactional
@@ -132,5 +132,38 @@ public interface ServiceRequestRepository
             @Param("serviceType") String serviceType,
             @Param("date") LocalDate date,
             Pageable pageable
+    );
+
+    @Query("""
+    SELECT s FROM ServiceRequest s
+    WHERE s.serviceDate = :today
+    AND s.serviceEndTime <= :time
+    AND s.status IN ('OPEN','IN_PROGRESS','FULL')
+""")
+    List<ServiceRequest> findExpiredServices(
+            @Param("today") LocalDate today,
+            @Param("time") LocalTime time
+    );
+
+    @Query("""
+    SELECT s FROM ServiceRequest s
+    WHERE s.serviceDate = :today
+    AND s.serviceStartTime <= :time
+    AND s.status = 'OPEN'
+""")
+    List<ServiceRequest> findServicesToStart(
+            @Param("today") LocalDate today,
+            @Param("time") LocalTime time
+    );
+
+    @Query("""
+    SELECT s FROM ServiceRequest s
+    WHERE s.serviceDate = :today
+    AND s.serviceEndTime <= :time
+    AND s.status = 'IN_PROGRESS'
+""")
+    List<ServiceRequest> findServicesToComplete(
+            @Param("today") LocalDate today,
+            @Param("time") LocalTime time
     );
 }

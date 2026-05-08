@@ -74,4 +74,22 @@ FROM OrganizationParticipation o
 WHERE o.organization.id = :orgId
 """)
     Double findScore(Long orgId);
+
+    @Modifying
+    @Transactional
+    @Query("""
+    UPDATE OrganizationParticipation o
+    SET o.status = 'CANCELLED'
+    WHERE o.serviceRequest.id = :serviceId
+""")
+    void cancelByServiceId(@Param("serviceId") Long serviceId);
+
+    @Modifying
+    @Transactional
+    @Query("""
+    UPDATE OrganizationParticipation o 
+    SET o.status = 'REJECTED' WHERE o.serviceRequest.id = :id 
+    AND o.status = 'REQUESTED'
+""")
+    void RejectRequestedParticipants(@Param("id") Long id);
 }
